@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class InteractiveCommandLine {
 	static String command = new String();
-	static String path = path = "C:/";;
+	static String path = "C:/";;
 
 	public static void main(String[] args) {
 		input();
@@ -28,7 +28,7 @@ public class InteractiveCommandLine {
 				System.out.println("The destination link isn't a directory");
 			}
 		} else {
-			System.out.println("The destination directory doesn't exist or the name is invalid.");
+			System.out.println("The destination file doesn't exist or the name is invalid.(names can't contain spaces)");
 		}
 		return exist;
 	}
@@ -38,7 +38,7 @@ public class InteractiveCommandLine {
 		if (source.exists()) {
 			exist = true;
 		} else {
-			System.out.println("The source file doesn't exist or the name is invalid.");
+			System.out.println("The source file doesn't exist or the name is invalid.(names can't contain spaces)");
 		}
 		return exist;
 	}
@@ -116,7 +116,7 @@ public class InteractiveCommandLine {
 
 			System.out.println(output);
 		} else {
-			System.out.println("File doesn't exist or the name is invalid.");
+			System.out.println("File doesn't exist or the name is invalid.(names can't contain spaces)");
 		}
 	}
 
@@ -129,7 +129,7 @@ public class InteractiveCommandLine {
 					System.out.println("The link isn't a directory");
 				}
 			} else {
-				System.out.println("Directory doesn't exist");
+				System.out.println("Directory doesn't exist ar the name is invalid.(names can't contain spaces)");
 			}
 		}
 
