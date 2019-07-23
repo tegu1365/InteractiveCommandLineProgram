@@ -43,7 +43,17 @@ public class InteractiveCommandLine {
 		return exist;
 	}
 
+	static String relativePath(String source) {
+		if(!source.contains(":")) {
+			return path+source;
+		}else {
+			return source;
+		}
+	}
+	
 	static void copy(String source, String destination) throws IOException {// copies file from source to destination
+		source=relativePath(source);
+		destination=relativePath(destination);
 		if (copyAndMoveValidationSource(new File(source)) && copyAndMoveValidationDest(new File(destination))) {
 			Path sourceDirectory = Paths.get(source);
 			Path targetDirectory;
@@ -66,15 +76,21 @@ public class InteractiveCommandLine {
 	static void list() {// lists all files and sub-dir in the current dir
 		File[] files = new File(path).listFiles();
 		if (files != null) {
+			if(files.length!=0) {
 			for (File file : files) {
 				System.out.println(file.getPath());
 			}
+			}else {
+				System.out.println("Directory is empty");
+			}
 		} else {
-			System.out.println("File Not Found");
+			System.out.println("Directory Not Found");
 		}
 	}
 
 	static void move(String source, String destination) throws IOException {// moves file from source to destination
+		source=relativePath(source);
+		destination=relativePath(destination);
 		if (copyAndMoveValidationSource(new File(source)) && copyAndMoveValidationDest(new File(destination))) {
 			Path sourceDirectory = Paths.get(source);
 			Path targetDirectory;
@@ -95,6 +111,7 @@ public class InteractiveCommandLine {
 	}
 
 	static void properties(String file) {// lists file properties
+		file=relativePath(file);
 		File source = new File(file);
 		if (source.exists()) {
 			StringBuilder output = new StringBuilder();
@@ -121,6 +138,7 @@ public class InteractiveCommandLine {
 	}
 
 	static void changeDir(String dir) {// changes current dir path to submitted by the user dir path
+		dir=relativePath(dir);
 		if (!dir.equals("")) {
 			if (new File(dir).exists()) {
 				if (new File(dir).isDirectory()) {
