@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class InteractiveCommandLine {
 	static String command = new String();
-	static String path = "C:/";;
+	static String path = "C:\\";
 
 	public static void main(String[] args) {
 		input();
@@ -25,10 +25,11 @@ public class InteractiveCommandLine {
 			if (target.isDirectory()) {
 				exist = true;
 			} else {
-				System.out.println("The destination link isn't a directory");
+				System.out.println("The destination isn't a directory");
 			}
 		} else {
-			System.out.println("The destination file doesn't exist or the name is invalid.(names can't contain spaces)");
+			System.out
+					.println("The destination file doesn't exist or the name is invalid.(names can't contain spaces)");
 		}
 		return exist;
 	}
@@ -43,17 +44,14 @@ public class InteractiveCommandLine {
 		return exist;
 	}
 
-	static String relativePath(String source) {
-		if(!source.contains(":")) {
-			return path+source;
-		}else {
-			return source;
-		}
+	static String relativePathValidation(String source) {
+		File file = new File(source);
+		return file.getAbsolutePath();
 	}
-	
+
 	static void copy(String source, String destination) throws IOException {// copies file from source to destination
-		source=relativePath(source);
-		destination=relativePath(destination);
+		source = relativePathValidation(source);
+		destination = relativePathValidation(destination);
 		if (copyAndMoveValidationSource(new File(source)) && copyAndMoveValidationDest(new File(destination))) {
 			Path sourceDirectory = Paths.get(source);
 			Path targetDirectory;
@@ -73,24 +71,22 @@ public class InteractiveCommandLine {
 		}
 	}
 
-	static void list() {// lists all files and sub-dir in the current dir
+	static String list() {// lists all files and sub-dir in the current dir
 		File[] files = new File(path).listFiles();
-		if (files != null) {
-			if(files.length!=0) {
+		StringBuilder output = new StringBuilder();
+		if (files.length != 0) {
 			for (File file : files) {
-				System.out.println(file.getPath());
-			}
-			}else {
-				System.out.println("Directory is empty");
+				output.append(file.getPath() + "\n");
 			}
 		} else {
-			System.out.println("Directory Not Found");
+			output.append("Directory is empty");
 		}
+		return output.toString();
 	}
 
 	static void move(String source, String destination) throws IOException {// moves file from source to destination
-		source=relativePath(source);
-		destination=relativePath(destination);
+		source = relativePathValidation(source);
+		destination = relativePathValidation(destination);
 		if (copyAndMoveValidationSource(new File(source)) && copyAndMoveValidationDest(new File(destination))) {
 			Path sourceDirectory = Paths.get(source);
 			Path targetDirectory;
@@ -110,44 +106,49 @@ public class InteractiveCommandLine {
 		}
 	}
 
-	static void properties(String file) {// lists file properties
-		file=relativePath(file);
+	static String properties(String file) {// lists file properties
+		file = relativePathValidation(file);
 		File source = new File(file);
+		StringBuilder output = new StringBuilder();
 		if (source.exists()) {
-			StringBuilder output = new StringBuilder();
-			Path filePath = source.toPath();
-			output.append("Path: " + source.getAbsolutePath() + "\n");
+			if (source.isFile()) {
+				Path filePath = source.toPath();
+				output.append("Path: " + source.getAbsolutePath() + "\n");
 
-			try {
-				output.append("Size: " + Files.size(filePath) + " bytes\n");
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					output.append("Size: " + Files.size(filePath) + " bytes\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				String extension = "";
+
+				int i = file.lastIndexOf('.');
+				if (i >= 0) {
+					extension = file.substring(i + 1);
+				}
+				output.append("Format: " + extension + "\n");
+
+				// System.out.println(output);
+			} else {
+				output.append("This is NOT a file");
 			}
-			String extension = "";
-
-			int i = file.lastIndexOf('.');
-			if (i >= 0) {
-				extension = file.substring(i + 1);
-			}
-			output.append("Format: " + extension + "\n");
-
-			System.out.println(output);
 		} else {
-			System.out.println("File doesn't exist or the name is invalid.(names can't contain spaces)");
+			output.append("File doesn't exist or the name is invalid.(names can't contain spaces)");
 		}
+		return output.toString();
 	}
 
 	static void changeDir(String dir) {// changes current dir path to submitted by the user dir path
-		dir=relativePath(dir);
+		dir = relativePathValidation(dir);
 		if (!dir.equals("")) {
 			if (new File(dir).exists()) {
 				if (new File(dir).isDirectory()) {
 					path = dir;
 				} else {
-					System.out.println("The link isn't a directory");
+					System.out.println("The path isn't a directory");
 				}
 			} else {
-				System.out.println("Directory doesn't exist ar the name is invalid.(names can't contain spaces)");
+				System.out.println("Directory doesn't exist or the name is invalid.(names can't contain spaces)");
 			}
 		}
 
@@ -166,7 +167,7 @@ public class InteractiveCommandLine {
 				}
 				break;
 			case "ls":
-				list();
+				System.out.print(list());
 				break;
 			case "move":
 				try {
@@ -176,7 +177,7 @@ public class InteractiveCommandLine {
 				}
 				break;
 			case "properties":
-				properties(cm[1]);
+				System.out.print(properties(cm[1]));
 				break;
 			default:
 				changeDir(command);
